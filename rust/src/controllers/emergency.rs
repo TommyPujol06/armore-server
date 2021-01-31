@@ -132,12 +132,10 @@ fn build_emergency_notifications(
     get_user_details(rec_username, conn)
         .ok()
         .flatten()
-        .map_or((vec![], vec![]), |rec_details| {
+        .map_or((vec![], None), |rec_details| {
             let notifications =
                 build_emergency_notification(conn, &sender_details, &rec_details, &state);
-            let email = sender_details
-                .email
-                .and_then(|_| Some(build_emergency_email(&sender_details, &rec_details, &state)));
+            let email = sender_details.email.clone().map(|_| build_emergency_email(&sender_details, &rec_details, &state));
             (notifications, email)
         })
 }
